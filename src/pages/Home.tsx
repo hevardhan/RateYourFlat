@@ -66,8 +66,8 @@ const HomeSpline = () => {
           <div className='spline-button text-center' onClick={() => navigate('/login')}>
             Get Started 👉
           </div>
-          {/* <div className='spline-button text-center' onClick={() => window.location.href = 'https://zennai99.b2clogin.com/zennai99.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_B2C_login&client_id=f5ced012-f62b-4328-8d73-94b24f706c35&nonce=defaultNonce&redirect_uri=https%3A%2F%2Frate-your-flat-rose.vercel.app%2F&scope=openid&response_type=code&prompt=login'}> */}
-          <div className='spline-button text-center' onClick={() => navigate('/login')}>
+          <div className='spline-button text-center' onClick={() => window.location.href = 'https://zennai99.b2clogin.com/zennai99.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_B2C_login&client_id=f5ced012-f62b-4328-8d73-94b24f706c35&nonce=defaultNonce&redirect_uri=https%3A%2F%2Frate-your-flat-rose.vercel.app%2F&scope=openid&response_type=code&prompt=login'}>
+          {/* <div className='spline-button text-center' onClick={() => navigate('/login')}> */}
             Login
           </div>
         </div>
