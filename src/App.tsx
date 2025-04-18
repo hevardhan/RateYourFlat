@@ -12,9 +12,7 @@ import RecruiterStudents from './pages/recruiter/RecruiterStudents.tsx';
 import RecruiterChat from './pages/recruiter/RecruiterChat.tsx';
 import RecruiterSettings from './pages/recruiter/RecruiterSettings.tsx';
 import Home from './pages/Home.tsx';
-import About from './pages/About.tsx';
-import { Download } from 'lucide-react';
-import Contact from './pages/Contact.tsx';
+import Crud from './pages/Crud.tsx';
 
 function App() {
   return (
@@ -22,11 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-
-        {/* Public Routes */}
-        <Route path="/about" element={<About />} />
-        <Route path="/download" element={<Download />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/crud" element={<Crud />} />
         
         {/* Student Routes */}
         <Route path="/student" element={<Navigate to="/student/chat" replace />} />
