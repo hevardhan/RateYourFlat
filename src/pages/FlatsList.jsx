@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 
 export default function FlatsList() {
@@ -180,7 +181,7 @@ export default function FlatsList() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFlats.map((flat) => (
-            <Link key={flat.id} to={`/flats/${flat.id}`}>
+            <Link key={flat.id} to={`/${city}/${college}/flats/${flat.id}`}>
               <Card className="overflow-hidden h-full transition-colors hover:bg-muted/50">
                 <div className="aspect-video relative bg-muted">
                   <div className="absolute top-2 right-2 bg-background rounded-md px-2 py-1 text-sm font-medium">
@@ -247,6 +248,7 @@ export default function FlatsList() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

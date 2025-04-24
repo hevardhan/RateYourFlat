@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState } from "react"
-import { Link } from "react-router-dom"
+import React, { useState, useEffect } from "react"
+import { Link, useParams } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBed, faBath, faBuilding, faCalendar, faChevronLeft, faMapPin, faPhone, faStar, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons"
 import { Button } from "@/components/ui/button"
@@ -10,65 +10,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Navbar from "@/components/Navbar"
+import axios from "axios";
 
-// Mock data for a single flat
-const flatData = {
-  id: "flat1",
-  name: "Riverside Apartments",
-  address: "123 River Road, London",
-  price: 850,
-  rating: 4.5,
-  bedrooms: 2,
-  bathrooms: 1,
-  description:
-    "Modern student accommodation with great river views. This spacious flat features two bedrooms, a fully equipped kitchen, high-speed internet, and a balcony overlooking the river. Located just 10 minutes walk from campus, with easy access to public transportation, shops, and restaurants.",
-  amenities: [
-    "Fully Furnished",
-    "High-Speed Internet",
-    "Washing Machine",
-    "Dishwasher",
-    "Central Heating",
-    "Balcony",
-    "Bike Storage",
-  ],
-  owner: {
-    name: "John Smith",
-    phone: "+44 123 456 7890",
-    email: "john.smith@example.com",
-  },
-  reviews: [
-    {
-      id: "review1",
-      user: "Alex Johnson",
-      date: "March 15, 2023",
-      rating: 5,
-      comment: "Excellent flat! Great location, clean, and the landlord is very responsive. Highly recommend!",
-    },
-    {
-      id: "review2",
-      user: "Sam Taylor",
-      date: "February 2, 2023",
-      rating: 4,
-      comment:
-        "Very nice place to live. Good amenities and close to campus. The only downside is that it can get a bit noisy on weekends.",
-    },
-    {
-      id: "review3",
-      user: "Jamie Smith",
-      date: "December 10, 2022",
-      rating: 4.5,
-      comment:
-        "I've been living here for a year and I'm very satisfied. The flat is spacious, well-maintained, and the location is perfect for students.",
-    },
-  ],
-}
 
 export default function FlatDetailPage() {
+  const { city, college, flatid } = useParams() // Get dynamic params from URL
+  const [flat, setFlat] = useState(null) // Initialize state to store flat data
   const [reviewText, setReviewText] = useState("")
   const [rating, setRating] = useState(0)
   const [hoveredRating, setHoveredRating] = useState(0)
+  console.log("city:", city, "college:", college, "flatid:", flatid)
 
-  const flat = flatData // In a real app, you would fetch the flat data based on the ID
+  // Fetch the flat data when the component mounts
+  useEffect(() => {
+    const fetchFlatData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/colleges/${city}/${college}/flats/${flatid}`) // Adjust the endpoint to match your API
+        setFlat(response.data) // Set the fetched flat data
+      } catch (error) {
+        console.error("Error fetching flat data:", error)
+      }
+    }
+
+    fetchFlatData()
+  }, [city, college, flatid]) // Re-fetch data when params change
 
   const handleSubmitReview = (e) => {
     e.preventDefault()
@@ -107,12 +72,14 @@ export default function FlatDetailPage() {
       ))
   }
 
+  if (!flat) return <div>Loading...</div> // Show a loading state until data is fetched
+
   return (
     <div>
       <Navbar is_fixed={false} />
     <div className="py-12 space-y-8 mx-30">
       <div className="flex items-center">
-        <Link to="/colleges" className="flex items-center text-muted-foreground hover:text-foreground">
+        <Link to={`/${city}/${college}`} className="flex items-center text-muted-foreground hover:text-foreground">
           <FontAwesomeIcon icon={faChevronLeft} className="h-4 w-4 mr-1" />
           Back to Flats
         </Link>
@@ -172,7 +139,7 @@ export default function FlatDetailPage() {
             <TabsContent value="description" className="mt-6 ">
               <div className="space-y-4">
                 <h2 className="text-xl font-bold">About this flat</h2>
-                <p>{flat.description}</p>
+                <p>{flat.details.description}</p>
 
                 <div className="aspect-video bg-muted rounded-lg mt-4">
                   {/* Map would go here */}
@@ -187,7 +154,7 @@ export default function FlatDetailPage() {
               <div className="space-y-4">
                 <h2 className="text-xl font-bold">Amenities</h2>
                 <div className="grid grid-cols-2 gap-2">
-                  {flat.amenities.map((amenity, index) => (
+                  {flat.details.amenities.map((amenity, index) => (
                     <div key={index} className="flex items-center">
                       <div className="h-2 w-2 rounded-full bg-primary mr-2" />
                       <span>{amenity}</span>
@@ -201,7 +168,7 @@ export default function FlatDetailPage() {
                 <h2 className="text-xl font-bold">Student Reviews</h2>
 
                 <div className="space-y-4">
-                  {flat.reviews.map((review) => (
+                  {flat.details.reviews.map((review) => (
                     <Card key={review.id}>
                       <CardHeader className="p-4 pb-2">
                         <div className="flex items-start justify-between">
@@ -256,11 +223,11 @@ export default function FlatDetailPage() {
               <div className="space-y-4">
                 <div className="flex items-center">
                   <FontAwesomeIcon icon={faPhone} className="h-5 w-5 mr-2" />
-                  <span>{flat.owner.phone}</span>
+                  <span>{flat.details.owner.phone}</span>
                 </div>
                 <div className="flex items-center">
                   <FontAwesomeIcon icon={faEnvelope} className="h-5 w-5 mr-2" />
-                  <span>{flat.owner.email}</span>
+                  <span>{flat.details.owner.email}</span>
                 </div>
               </div>
             </CardContent>

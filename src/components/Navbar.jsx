@@ -35,13 +35,16 @@ const Navbar = ({ is_fixed = true }) => {
       className={`top-0 left-0 w-full z-50 bg-black text-white shadow-md ${is_fixed ? 'fixed' : 'relative'}`}
     >
       <div className="px-6 md:px-30 flex py-4 justify-between items-center">
+        <a href="/">
         <div className="text-3xl md:text-5xl font-bold">RATE MY FLAT</div>
+        </a>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6 items-center">
-          <a href="#" className="hover:text-gray-300">Home</a>
-          <a href="#" className="hover:text-gray-300">About</a>
-          <a href="#" className="hover:text-gray-300">Services</a>
+          <a href="/" className="hover:text-gray-300">Home</a>
+          <a href="/about" className="hover:text-gray-300">About</a>
+          {/* <a href="/about" className="hover:text-gray-300">About</a> */}
+          <a href="/find" className="hover:text-gray-300">Flats</a>
           <a
             href="https://zennai99.b2clogin.com/zennai99.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_carrerally&client_id=cd0a749b-f57d-4172-be86-b00ba933235d&nonce=defaultNonce&redirect_uri=https%3A%2F%2Fcareerally-78e9f.web.app%2Flogin&scope=openid&response_type=code&prompt=login"
             className="bg-white text-black px-4 py-1 rounded-full font-semibold hover:bg-gray-200 transition hover:scale-110 active:scale-100"
@@ -69,7 +72,7 @@ const Navbar = ({ is_fixed = true }) => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden mt-4 space-y-2 text-center pb-4">
-          <a href="#" className="block hover:text-gray-300">Home</a>
+          <a href="/home" className="block hover:text-gray-300">Home</a>
           <a href="#" className="block hover:text-gray-300">About</a>
           <a href="#" className="block hover:text-gray-300">Services</a>
           <a href="#" className="block hover:text-gray-300">Contact</a>
