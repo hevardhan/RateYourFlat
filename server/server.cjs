@@ -4,6 +4,7 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
+app.use(express.json());  // This will parse incoming JSON payloads
 
 const uri = "mongodb+srv://hevardhan:heva2004@rf-demo.nbrkrqv.mongodb.net/?retryWrites=true&w=majority&appName=rf-demo";
 const client = new MongoClient(uri);
@@ -234,8 +235,54 @@ app.delete("/api/colleges/:cityName/:collegeId", async (req, res) => {
     res.status(500).json({ error: "Failed to delete college" });
   }
 });
+
+// POST route to add a new review for a specific flat
+app.post("/api/reviews/:flatid", async (req, res) => {
+  const { flatid } = req.params;  // Get the flatid from the URL parameter
+  const { reviewText, rating, user } = req.body;  // Get review details from the request body
+
+  try {
+    if (!reviewText || rating === undefined || !user) {
+      return res.status(400).json({ error: "Review text, rating, and user are required" });
+    }
+
+    const db = client.db('rate-my-flat');  // Use the 'rate-my-flat' database
+    const collegesCollection = db.collection('colleges');  // Access the 'colleges' collection
+
+    // Find the specific flat based on flatid
+    const updateResult = await collegesCollection.updateOne(
+      { "flats.id": flatid },  // Find the flat by its id
+      {
+        $push: {
+          "flats.$.details.reviews": {
+            id: new ObjectId(),  // Generate a new unique ID for the review
+            user,
+            date: new Date(),
+            rating,
+            comment: reviewText
+          },
+        },
+        $inc: {
+          "flats.$.reviews": 1,  // Increment the review count for the flat
+        },
+      }
+    );
+
+    if (updateResult.matchedCount === 0) {
+      return res.status(404).json({ error: "Flat not found" });
+    }
+
+    res.status(201).json({ message: "Review submitted successfully" });
+  } catch (error) {
+    console.error("Error submitting review:", error);
+    res.status(500).json({ error: "Failed to submit review" });
+  }
+});
+
+
 // Start the server and connect to MongoDB
 connectToDatabase().then(() => {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
+

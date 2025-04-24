@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle,CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
+import WatsonChat from "@/components/WatsonChat";
 
 const College = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,6 +45,7 @@ const College = () => {
 
   return (
     <div>
+      <WatsonChat />
       <Navbar is_fixed={false} />
 
       <div className="max-w-3xl mx-auto text-center space-y-4 pt-20">

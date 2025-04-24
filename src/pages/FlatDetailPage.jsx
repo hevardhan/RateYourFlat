@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Navbar from "@/components/Navbar"
 import axios from "axios";
+import WatsonChat from "@/components/WatsonChat"
 
 
 export default function FlatDetailPage() {
@@ -35,13 +36,49 @@ export default function FlatDetailPage() {
     fetchFlatData()
   }, [city, college, flatid]) // Re-fetch data when params change
 
-  const handleSubmitReview = (e) => {
-    e.preventDefault()
-    // In a real app, you would submit the review to an API
-    alert("Review submitted successfully!")
-    setReviewText("")
-    setRating(0)
+  
+  const handleSubmitReview = async (event) => {
+    event.preventDefault()
+
+    // Validate the form data
+    if (!reviewText || !rating || !user) {
+      alert("Please fill out all fields.")
+      return
+    }
+
+    const reviewData = {
+      reviewText,
+      rating,
+      user,
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/reviews/${flatid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        alert("Review submitted successfully")
+        // Optionally clear the form after submission
+        setReviewText("")
+        setRating(0)
+        setUser("")
+      } else {
+        alert(`Error: ${result.error}`)
+      }
+    } catch (error) {
+      console.error("Error submitting review:", error)
+      alert("Failed to submit review")
+    }
   }
+
+  
 
   const renderStars = (value) => {
     return Array(5)
@@ -76,6 +113,7 @@ export default function FlatDetailPage() {
 
   return (
     <div>
+      <WatsonChat />
       <Navbar is_fixed={false} />
     <div className="py-12 space-y-8 mx-30">
       <div className="flex items-center">
@@ -89,7 +127,8 @@ export default function FlatDetailPage() {
         <div className="lg:col-span-2 space-y-8">
           <div>
             <div className="aspect-video bg-muted rounded-lg relative overflow-hidden">
-              <div className="absolute top-4 right-4 bg-background rounded-md px-3 py-1.5 font-medium">
+              <img src="https://www.asenseinterior.com/assets/uploads/bee49715fcbd5ad06d59e615a94153c7.jpg" alt={flat.name} className=""/>
+              <div className="absolute top-4 right-4 bg-background rounded-md px-3 py-1.5 font-medium text-black">
                 £{flat.price}/mo
               </div>
             </div>
@@ -144,8 +183,9 @@ export default function FlatDetailPage() {
                 <div className="aspect-video bg-muted rounded-lg mt-4">
                   {/* Map would go here */}
                   <div className="h-full flex items-center justify-center text-muted-foreground">
-                    <FontAwesomeIcon icon={faMapPin} className="h-8 w-8 mr-2" />
-                    <span>Map Location</span>
+                  <img src="https://media.wired.com/photos/5a6a61938c669c70314b300d/master/pass/Google-Map-US_10.jpg" srcset="" className="w-full h-full object-cover rounded-lg" />
+                    {/* <FontAwesomeIcon icon={faMapPin} className="h-8 w-8 mr-2" /> */}
+                    {/* <span>Map Location</span> */}
                   </div>
                 </div>
               </div>

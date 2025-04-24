@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBuilding, faMapPin, faStar, faUsers } from "@fortawesome/free-solid-svg-icons"
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import WatsonChat from '@/components/WatsonChat'
 
 
 const About = () => {
@@ -102,6 +103,7 @@ const About = () => {
       </div>
     </div>
     <Footer />
+    <WatsonChat />
     </div>
   )
 }

@@ -3,12 +3,13 @@ import Navbar from "../components/Navbar";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUniversity, faBuilding, faStar, faUsers } from '@fortawesome/free-solid-svg-icons'
 import Footer from "@/components/Footer";
+import WatsonChat from "@/components/WatsonChat";
 
 const Home = () => {
   return (
     <div>
       <Navbar />
-      
+      <WatsonChat />
       <div className="flex flex-col lg:flex-row m-5 sm:m-10 mt-20 justify-around items-center">
         <div className="left text-center lg:text-left">
           <p className="text-5xl sm:text-7xl lg:text-9xl font-bold">RATE MY</p>

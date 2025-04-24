@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import WatsonChat from "@/components/WatsonChat";
 
 
 export default function FlatsList() {
@@ -91,6 +92,7 @@ export default function FlatsList() {
 
   return (
     <div>
+      <WatsonChat />
       <Navbar is_fixed={false} />
       <div className="p-20 space-y-8 px-30">
         <div className="max-w-3xl mx-auto text-center space-y-4">
@@ -184,6 +186,7 @@ export default function FlatsList() {
             <Link key={flat.id} to={`/${city}/${college}/flats/${flat.id}`}>
               <Card className="overflow-hidden h-full transition-colors hover:bg-muted/50">
                 <div className="aspect-video relative bg-muted">
+                  <img src="https://media.designcafe.com/wp-content/uploads/2021/09/26194959/futuristic-design-ideas.jpg" alt="" />
                   <div className="absolute top-2 right-2 bg-background rounded-md px-2 py-1 text-sm font-medium">
                     £{flat.price}/mo
                   </div>
