@@ -39,44 +39,54 @@ export default function FlatDetailPage() {
   
   const handleSubmitReview = async (event) => {
     event.preventDefault()
-
+  
+    // Get dynamic parameters from the URL
+    // const { city, college, flatid } = useParams()
+  
     // Validate the form data
-    if (!reviewText || !rating || !user) {
+    if (!reviewText || !rating) {
       alert("Please fill out all fields.")
       return
     }
-
+  
     const reviewData = {
       reviewText,
       rating,
-      user,
+      user: "John Doe",
     }
-
     try {
-      const response = await fetch(`http://localhost:5000/api/reviews/${flatid}`, {
+      const response = await fetch(`http://localhost:5000/api/reviews/${city}/${college}/flats/${flatid}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(reviewData),
       })
-
-      const result = await response.json()
-
+    
+      const text = await response.text() // Get raw text first
+      console.log("Raw response:", text)
+    
+      let result
+      try {
+        result = JSON.parse(text) // Try parsing manually
+      } catch (parseErr) {
+        console.error("Failed to parse JSON:", parseErr)
+        alert("Server returned invalid JSON.")
+        return
+      }
+    
       if (response.ok) {
         alert("Review submitted successfully")
-        // Optionally clear the form after submission
         setReviewText("")
         setRating(0)
-        setUser("")
       } else {
-        alert(`Error: ${result.error}`)
+        alert(`Error: ${result.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error("Error submitting review:", error)
       alert("Failed to submit review")
     }
-  }
+      }
 
   
 

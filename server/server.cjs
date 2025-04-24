@@ -1,6 +1,8 @@
 const express = require("express");
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
+const { ObjectId } = require('mongodb');
+
 
 const app = express();
 app.use(cors());
@@ -237,48 +239,62 @@ app.delete("/api/colleges/:cityName/:collegeId", async (req, res) => {
 });
 
 // POST route to add a new review for a specific flat
-app.post("/api/reviews/:flatid", async (req, res) => {
-  const { flatid } = req.params;  // Get the flatid from the URL parameter
-  const { reviewText, rating, user } = req.body;  // Get review details from the request body
-
+// POST route to add a new review for a specific flat
+app.post("/api/reviews/:cityName/:collegeName/flats/:flatId", async (req, res) => {
   try {
-    if (!reviewText || rating === undefined || !user) {
-      return res.status(400).json({ error: "Review text, rating, and user are required" });
+    const db = client.db(dbName);
+    const cityName    = req.params.cityName.toLowerCase();
+    const collegeName = req.params.collegeName.toLowerCase();
+    const flatId      = req.params.flatId;
+    const { reviewText, rating } = req.body;
+    console.log("Looking for flatId:", flatId);
+    
+    // validate
+    if (!reviewText || rating === undefined) {
+      return res.status(400).json({ error: "Review text and rating are required" });
     }
-
-    const db = client.db('rate-my-flat');  // Use the 'rate-my-flat' database
-    const collegesCollection = db.collection('colleges');  // Access the 'colleges' collection
-
-    // Find the specific flat based on flatid
-    const updateResult = await collegesCollection.updateOne(
-      { "flats.id": flatid },  // Find the flat by its id
-      {
-        $push: {
-          "flats.$.details.reviews": {
-            id: new ObjectId(),  // Generate a new unique ID for the review
-            user,
-            date: new Date(),
-            rating,
-            comment: reviewText
-          },
-        },
-        $inc: {
-          "flats.$.reviews": 1,  // Increment the review count for the flat
-        },
-      }
-    );
-
-    if (updateResult.matchedCount === 0) {
+    
+    // fetch the college doc
+    const college = await db.collection("colleges").findOne({
+      city:      cityName,
+      college_id: collegeName
+    });
+    if (!college) {
+      return res.status(404).json({ error: "College not found" });
+    }
+    
+    console.log("All flat IDs in college:", college.flats.map(f => f.id));
+    // find the flat
+    const flatIndex = college.flats.findIndex(f => f.id === flatId);
+    if (flatIndex === -1) {
       return res.status(404).json({ error: "Flat not found" });
     }
 
-    res.status(201).json({ message: "Review submitted successfully" });
+    // build the review
+    const review = {
+      id:      new ObjectId(),
+      user:    "John Doe",
+      date:    new Date(),
+      rating,
+      comment: reviewText
+    };
+
+    // mutate in JS
+    college.flats[flatIndex].details.reviews.push(review);
+    college.flats[flatIndex].reviews += 1;
+
+    // write back the updated flats array
+    await db.collection("colleges").updateOne(
+      { city: cityName, college_id: collegeName },
+      { $set: { flats: college.flats } }
+    );
+
+    return res.status(201).json({ message: "Review submitted successfully" });
   } catch (error) {
     console.error("Error submitting review:", error);
-    res.status(500).json({ error: "Failed to submit review" });
+    return res.status(500).json({ error: "Failed to submit review" });
   }
 });
-
 
 // Start the server and connect to MongoDB
 connectToDatabase().then(() => {
